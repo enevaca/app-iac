@@ -5,6 +5,10 @@ $ git clone https://github.com/enevaca/app-iac.git
 
 $ cd app-iac/
 
+$ cp iac-backend/.env.example iac-backend/.env
+
+$ cp iac-frontend/.env.example iac-frontend/.env
+
 $ docker compose up -d
 ```
 
