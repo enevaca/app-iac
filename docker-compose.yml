@@ -54,4 +54,5 @@ services:
 
 networks:
   net-music:
+    name: net-music
     driver: bridge    
