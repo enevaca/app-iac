@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  db-music:
+    image: mysql
+    container_name: db-music
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/db:/var/lib/mysql
+    networks:
+      - net-music
+    environment:
+      MYSQL_DATABASE: db_iac
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: usriac
+      MYSQL_PASSWORD: Passw0rd
+  backend-music:
+    depends_on:
+      - db-music
+    image: bk-music
+    container_name: api-music
+    restart: unless-stopped
+    build:
+      context: ./iac-backend
+      dockerfile: Dockerfile
+    ports:
+      - 4000:4000
+    networks:
+      - net-music
+    environment:
+      DB_HOST: db-music
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules/
+  frontend-music:
+    depends_on:
+      - backend-music
+    image: fe-music
+    container_name: front-music
+    restart: unless-stopped
+    build:
+      context: ./iac-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 85:85
+    networks:
+      - net-music
+    environment:
+      VITE_BASE_URL_ENDPOINT: backend-music
+    volumes:
+      - /usr/src/app/node_modules/    
+
+networks:
+  net-music:
+    driver: bridge    
